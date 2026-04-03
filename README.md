@@ -54,9 +54,7 @@ A fully automated AI-powered WhatsApp bot built using **n8n**, **Ollama (local L
 - Install **Ollama** → https://ollama.com  
 - Install **ngrok** → https://ngrok.com  
 
----
-
-# 2️⃣ Start Services 
+### 2️⃣ Start Services 
 
 ```bash
 # Start Ollama server
@@ -73,13 +71,13 @@ n8n start
 # Start ngrok
 ngrok http 5678
 
-# 3️⃣ Configure Webhook
+### 3️⃣ Configure Webhook
 
 Use your ngrok URL:
 https://your-ngrok-url/webhook/webhook-test/whatsapp
 Add this to your WhatsApp Cloud API webhook settings.
 
-# 4️⃣ Import Workflow
+### 4️⃣ Import Workflow
 Open n8n dashboard
 Import your workflow JSON
 Update:
