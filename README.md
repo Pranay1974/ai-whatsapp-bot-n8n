@@ -56,18 +56,18 @@ A fully automated AI-powered WhatsApp bot built using **n8n**, **Ollama (local L
 
 ### 2️⃣ Start Services 
 
-# Start Ollama server
+#### Start Ollama server
 ollama serve
 
-# Pull model (choose one)
+#### Pull model (choose one)
 ollama pull tinyllama
-# or
+#### or
 ollama pull llama3
 
-# Start n8n
+#### Start n8n
 n8n start
 
-# Start ngrok
+#### Start ngrok
 ngrok http 5678
 
 ### 3️⃣ Configure Webhook
@@ -85,34 +85,34 @@ Phone Number ID
 
 ---
 
-🔐 Environment Variables
+### 🔐 Environment Variables
 
 Create a .env file:
 WHATSAPP_TOKEN=your_token_here
 PHONE_NUMBER_ID=your_id_here
 
-⚠️ Never upload real tokens to GitHub.
+### ⚠️ Never upload real tokens to GitHub.
 
-🧪 Example
+### 🧪 Example
 User: Hello
 Bot: Hi! How can I help you today?
 
-📈 Improvements (Next Steps)
+### 📈 Improvements (Next Steps)
  - 🌦️ Weather API integration
  - 🔍 Web search tool
  - 🗣️ Voice replies (Text-to-Speech)
  - ☁️ Deploy on VPS (24/7 uptime)
  - 📊 Admin dashboard
 
-⚠️ Important Notes
+### ⚠️ Important Notes
  - Free ngrok URL changes after restart
  - Keep Ollama running in background
  - Use smaller models (tinyllama) for faster response
 
-🙌 Author
- - Pranay Gurjar
+### 🙌 Author
+#### - Pranay Gurjar
 
-⭐ Support
+### ⭐ Support
 If you like this project:
  - ⭐ Star the repo
  - 🔁 Share it
