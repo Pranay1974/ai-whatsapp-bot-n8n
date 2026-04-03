@@ -1,0 +1,386 @@
+{
+  "name": "Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "webhook-test/whatsapp",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        40,
+        240
+      ],
+      "id": "8f0eda52-6dad-440a-906f-55615af6ed9e",
+      "name": "Webhook",
+      "webhookId": "ed7b3465-0359-47be-a48f-253a5750ce61"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=ok",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        260,
+        240
+      ],
+      "id": "ca2d3907-d4ed-416d-8045-4884d346804b",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8a78f91f-cec4-4fb2-bb14-cd4ce5674c8d",
+              "name": "=user_message",
+              "value": "={{$json.body.entry[0].changes[0].value.messages[0].text.body}}",
+              "type": "string"
+            },
+            {
+              "id": "16b8127b-4ae2-48ca-aafc-f3ee60d4842c",
+              "name": "=user_phone",
+              "value": "={{$json.body.entry[0].changes[0].value.messages[0].from}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        700,
+        240
+      ],
+      "id": "c2281a01-52dd-472b-b487-dc27bf7fb5a1",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4f15d8a7-a539-4dfd-bc4f-57d73af7617b",
+              "leftValue": "={{$json.body.entry[0].changes[0].value.messages[0].id}}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        240
+      ],
+      "id": "f447a4b4-91a6-4333-b3b0-6bf72fa8e930",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{$json.user_message}}",
+        "options": {
+          "systemMessage": "You are a smart WhatsApp assistant.\n\n\nRules:\n- Always reply ONLY to the user's message\n- Do NOT rewrite or improve prompts\n- Keep answers short (max 2–3 sentences)\n- Do not guess facts\n- If unsure, say \"I'm not sure about that\"\n\nBe accurate and concise."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        920,
+        240
+      ],
+      "id": "b45bbbd2-edbb-4566-a790-946e799bc35f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.user_phone }}",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1060,
+        460
+      ],
+      "id": "81d55a74-dd89-4c1e-a354-bcc7da9a6e73",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": "phi3:latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        900,
+        460
+      ],
+      "id": "f5c42942-68bc-45f2-8ad8-5810584e05ed",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "I6YqFssbKQTVgh0A",
+          "name": "Ollama account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f9ca4315-d10d-4be3-9b70-3c8f48efe4a0",
+              "name": "user_phone",
+              "value": "={{$node[\"Edit Fields\"].json[\"user_phone\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "049a7626-babb-4e76-8e94-d52d96f27172",
+              "name": "=response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "a152986e-ff3e-4f02-a149-30b349b5c7f2",
+              "name": "=chat_history",
+              "value": "={{ ($json.chat_history || \"\") + \"\\nBot: \" + $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1296,
+        240
+      ],
+      "id": "1fa630e7-e882-4211-bd21-31c013957afc",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v22.0/your_token_here/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer your_token_here"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{$json.user_phone}}\",\n  \"type\": \"text\",\n  \"text\": {\n    \"body\": {{ JSON.stringify($json.response) }}\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1516,
+        240
+      ],
+      "id": "c701cd89-204d-4b52-b704-535f7cefe1b0",
+      "name": "WhatsApp Send2"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "genny-unsullied-juridically.ngrok-free.dev",
+            "user-agent": "facebookexternalua",
+            "content-length": "492",
+            "accept": "*/*",
+            "accept-encoding": "deflate, gzip",
+            "content-type": "application/json",
+            "x-forwarded-for": "2a03:2880:10ff:4e::",
+            "x-forwarded-host": "genny-unsullied-juridically.ngrok-free.dev",
+            "x-forwarded-proto": "https",
+            "x-hub-signature": "sha1=54040a32d8435d20cc9256811cfb16916b9d07d1",
+            "x-hub-signature-256": "sha256=96b97d45ff98db0768bcfbc0006215a876ec7192f9c30f62399fff691987f30a"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "object": "whatsapp_business_account",
+            "entry": [
+              {
+                "id": "1341183447420565",
+                "changes": [
+                  {
+                    "value": {
+                      "messaging_product": "whatsapp",
+                      "metadata": {
+                        "display_phone_number": "15551802934",
+                        "phone_number_id": "908788175662535"
+                      },
+                      "contacts": [
+                        {
+                          "profile": {
+                            "name": "🚩"
+                          },
+                          "wa_id": "919827260331"
+                        }
+                      ],
+                      "messages": [
+                        {
+                          "from": "919827260331",
+                          "id": "wamid.HBgMOTE5ODI3MjYwMzMxFQIAEhggQUM1QTRDQUQ1QUE0NEQ5NzNDOTMyRkRGOUM4OTg1MTEA",
+                          "timestamp": "1773818060",
+                          "text": {
+                            "body": "Hello"
+                          },
+                          "type": "text"
+                        }
+                      ]
+                    },
+                    "field": "messages"
+                  }
+                ]
+              }
+            ]
+          },
+          "webhookUrl": "http://localhost:5678/webhook/webhook-test/whatsapp",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp Send2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3ac9f9ef-962e-4d3a-a014-cfccc9126049",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "16cbcf17ec4138a6753cc2274d92281b6f6571ebde30bbd07d132be35f8bec85"
+  },
+  "id": "IVYMq8xeJ0mxgDJH",
+  "tags": []
+}
