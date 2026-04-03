@@ -1,5 +1,15 @@
 # 🤖 AI WhatsApp Bot (n8n + Ollama)
 
+![n8n](https://img.shields.io/badge/Built%20With-n8n-orange)
+![Ollama](https://img.shields.io/badge/LLM-Ollama-black)
+![TinyLlama](https://img.shields.io/badge/Model-TinyLlama-blue)
+![WhatsApp API](https://img.shields.io/badge/API-WhatsApp%20Cloud-green)
+![Automation](https://img.shields.io/badge/Type-Automation-purple)
+![AI Agent](https://img.shields.io/badge/Agent-AI%20Powered-red)
+![Memory](https://img.shields.io/badge/Feature-Chat%20Memory-yellow)
+![Self Hosted](https://img.shields.io/badge/Deployment-Self--Hosted-lightgrey)
+![License](https://img.shields.io/badge/License-MIT-brightgreen)
+
 A fully automated AI-powered WhatsApp bot built using **n8n**, **Ollama (local LLM)**, and **WhatsApp Cloud API** — running completely on local infrastructure (no paid APIs).
 
 ---
