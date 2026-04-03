@@ -56,7 +56,6 @@ A fully automated AI-powered WhatsApp bot built using **n8n**, **Ollama (local L
 
 ### 2️⃣ Start Services 
 
-```bash
 # Start Ollama server
 ollama serve
 
